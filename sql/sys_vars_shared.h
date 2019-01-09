@@ -69,9 +69,12 @@ public:
 class PolyLock_lock_log: public PolyLock
 {
 public:
+  PolyLock_lock_log(): write_mode(false) {}
   void rdlock();
   void wrlock();
   void unlock();
+private:
+  bool write_mode;
 };
 
 class AutoWLock

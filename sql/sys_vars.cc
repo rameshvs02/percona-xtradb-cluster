@@ -3949,17 +3949,22 @@ static bool update_binlog_transaction_dependency_tracking(sys_var* var, THD* thd
 
 void PolyLock_lock_log::rdlock()
 {
-  mysql_mutex_lock(mysql_bin_log.get_log_lock());
+  write_mode= false;
 }
 
 void PolyLock_lock_log::wrlock()
 {
+  write_mode= true;
   mysql_mutex_lock(mysql_bin_log.get_log_lock());
 }
 
 void PolyLock_lock_log::unlock()
 {
-  mysql_mutex_unlock(mysql_bin_log.get_log_lock());
+  if (write_mode)
+  {
+    mysql_mutex_unlock(mysql_bin_log.get_log_lock());
+    write_mode= false;
+  }
 }
 
 static PolyLock_lock_log PLock_log;
